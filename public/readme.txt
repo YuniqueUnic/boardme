@@ -14,4 +14,4 @@ All images, assets and vectors published on ManyPixels can be used for free. You
 
 More precisely, ManyPixels grants you an nonexclusive, worldwide copyright license to download, copy, modify, distribute, perform, and use the assets provided from ManyPixels for free, including for commercial purposes, without permission from or attributing the creator or ManyPixels. This license does not include the right to compile assets, vectors or images from ManyPixels to replicate a similar or competing service, in any form or distribute the assets in packs or otherwise. This extends to automated and non-automated ways to link, embed.
 
-404/favorites2/search.svg are come from https://www.manypixels.co/gallery2
+404/favorites2/search/note/logo.svg are come from https://www.manypixels.co/gallery2
