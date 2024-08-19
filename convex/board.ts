@@ -59,7 +59,10 @@ export const remove = mutation({
 
 export const update = mutation({
   args: {
-    id: v.id("boards"),
+    id: v.id("boards"), // how does this id got?
+    // the onOpen(id,title) func is called when the MoreHorizontal ... button clicked on the hover:board-Card
+    // So the id and title are pass from the onOpen(id,title) func.
+    
     title: v.string(),
   },
   handler: async (ctx, args) => {
