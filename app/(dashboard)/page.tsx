@@ -2,20 +2,29 @@
 // import { UserButton } from "@clerk/nextjs";
 // import Image from "next/image";
 
-// export default function Home() {
-//   return (
-//     <div className="flex flex-col gap-y-4">
-//       <div>This is a screen for authenticated users only.</div>
-//       <div>
-//         <UserButton />
-//       </div>
-//     </div>
-//   );
-// }
-const DashboardPage = () => {
+"use client";
+
+import { useOrganization } from "@clerk/nextjs";
+import { EmptyOrg } from "./_components/empty-org";
+import { BoardList } from "./board-list";
+
+interface DashboardProps {
+  searchParams: {
+    search?: string;
+    favorites?: string;
+  };
+}
+
+const DashboardPage = ({ searchParams }: DashboardProps) => {
+  const { organization } = useOrganization();
+
   return (
-    <div className="bg-red-500 flex-1 h-[calc(100%-80px)]">
-      Dashboard Root Page
+    <div className=" flex-1 h-[calc(100%-80px)]">
+      {!organization ? (
+        <EmptyOrg />
+      ) : (
+        <BoardList orgId={organization.id} query={searchParams} />
+      )}
     </div>
   );
 };
