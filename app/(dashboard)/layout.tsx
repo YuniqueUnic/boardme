@@ -13,8 +13,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="pl-[60px] h-full">
         <div className="flex gap-x-3 h-full">
           <OrgSidebar />
-          <div className="h-full flex-1">
-            <div className="p-4">
+          <div className="h-full flex-1 p-4">
+            <div className="my-4">
               <Navbar />
             </div>
             {children}
