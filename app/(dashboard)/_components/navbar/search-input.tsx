@@ -6,6 +6,7 @@ import { useDebounceValue, useDebounceCallback } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+
 export const SearchInput = () => {
   const router = useRouter();
   const [value, setValue] = useState("");

@@ -13,6 +13,10 @@
 //   );
 // }
 const DashboardPage = () => {
-  return <div>Dashboard Root Page</div>;
+  return (
+    <div className="bg-red-500 flex-1 h-[calc(100%-80px)]">
+      Dashboard Root Page
+    </div>
+  );
 };
 export default DashboardPage;
