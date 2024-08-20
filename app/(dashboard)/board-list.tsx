@@ -20,6 +20,7 @@ interface BoardListProps {
 
 export const BoardList = ({ orgId, query }: BoardListProps) => {
   const data = useQuery(api.boards.get, { orgId });
+  // the data struct updated with a new field named ''isFavorite'' which append from boards.ts/ get func
 
   if (data === undefined) {
     return (
@@ -73,7 +74,7 @@ export const BoardList = ({ orgId, query }: BoardListProps) => {
               authorName={board.authorName}
               createAt={board._creationTime}
               orgId={board.orgId}
-              isFavorite={false}
+              isFavorite={board.isFavorite}
             />
           );
         })}
