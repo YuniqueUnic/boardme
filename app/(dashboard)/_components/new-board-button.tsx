@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 // import { useMutation } from "convex/react";
 
@@ -16,6 +17,7 @@ interface NewBoardButtonProps {
 
 export const NewBoardButton = ({ orgId, disabled }: NewBoardButtonProps) => {
   const auth = useAuth();
+  const router = useRouter();
   //   const create = useMutation(api.board.create);
   const { mutate, pending } = useApiMutation(api.board.create);
 
@@ -30,7 +32,7 @@ export const NewBoardButton = ({ orgId, disabled }: NewBoardButtonProps) => {
     })
       .then((id) => {
         toast.success("Board created!");
-        // TODO: Redirect to the /board/{id}
+        router.push(`/board/${id}`);
       })
       .catch((e) => {
         toast.error("Failed to create new board!");

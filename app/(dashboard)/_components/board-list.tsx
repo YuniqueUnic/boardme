@@ -4,11 +4,11 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 // import { Loading } from "@/components/auth/loading";
-import { BoardCard } from "./_components/board-card";
-import { EmptySearch } from "./_components/empty-search";
-import { EmptyBoards } from "./_components/empty-boards";
-import { EmptyFavorites } from "./_components/empty-favorites";
-import { NewBoardButton } from "./_components/new-board-button";
+import { BoardCard } from "./board-card";
+import { EmptySearch } from "./empty-search";
+import { EmptyBoards } from "./empty-boards";
+import { EmptyFavorites } from "./empty-favorites";
+import { NewBoardButton } from "./new-board-button";
 
 interface BoardListProps {
   orgId: string;
@@ -19,7 +19,10 @@ interface BoardListProps {
 }
 
 export const BoardList = ({ orgId, query }: BoardListProps) => {
-  const data = useQuery(api.boards.get, { orgId });
+  const data = useQuery(api.boards.get, {
+    orgId,
+    ...query,
+  });
   // the data struct updated with a new field named ''isFavorite'' which append from boards.ts/ get func
 
   if (data === undefined) {
