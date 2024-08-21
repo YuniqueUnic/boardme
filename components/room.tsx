@@ -17,8 +17,12 @@ const apiKey = liveblocksPBKey ?? "";
 
 export const Room = ({ children, roomId, fallback }: RoomProps) => {
   return (
-    <LiveblocksProvider publicApiKey={apiKey}>
+    // publicApiKey={apiKey}  publicApiKey and authEndpoint can only one works
+    <LiveblocksProvider authEndpoint={"/api/liveblocks-auth"}>
+
       <RoomProvider id={roomId} initialPresence={{}}>
+        {/* // there some problem that the board should not be access by a non-privledged user
+      // the ui canvas should in the loading status when such users trying to join a board room which not belong to them */}
         <ClientSideSuspense fallback={fallback}>
           {() => children}
         </ClientSideSuspense>

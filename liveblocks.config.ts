@@ -6,6 +6,12 @@ import { createRoomContext } from "@liveblocks/react";
 const liveblocksPBKey = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
 const liveblocksSCKey = process.env.NEXT_PUBLIC_LIVEBLOCKS_SECRET_KEY;
 
+// it replace by the LiveblocksProvider { publicApiKey or authEndpoint }
+const client = createClient({
+  authEndpoint: "/api/liveblocks-auth"
+});
+
+
 declare global {
   interface Liveblocks {
     // Each user's Presence, for useMyPresence, useOthers, etc.
@@ -22,11 +28,11 @@ declare global {
 
     // Custom user info set when authenticating with a secret key
     UserMeta: {
-      id: string;
-      info: {
+      id?: string;
+      info?: {
         // Example properties, for useSelf, useUser, useOthers, etc.
-        // name: string;
-        // avatar: string;
+        name?: string;
+        picture?: string;
       };
     };
 
@@ -52,4 +58,4 @@ declare global {
   }
 }
 
-export { liveblocksPBKey ,liveblocksSCKey };
+export { liveblocksPBKey, liveblocksSCKey };
