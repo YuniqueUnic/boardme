@@ -21,9 +21,10 @@ export const Room = ({ children, roomId, fallback }: RoomProps) => {
     <LiveblocksProvider authEndpoint={"/api/liveblocks-auth"}>
 
       <RoomProvider id={roomId} initialPresence={{}}>
-        {/* // there some problem that the board should not be access by a non-privledged user
+        {/* // there are some problem that the board should not be access by a non-privledged user
       // the ui canvas should in the loading status when such users trying to join a board room which not belong to them */}
-        {/* // TODO: Keep the loading status when the user is not authorized to access the board */}
+        {/* // Fixed: Keep the loading status when the user is not authorized to access the board */}
+        {/* // Solution: import { useSelf } from "@liveblocks/react/suspense" instead of "@liveblocks/react" in canvas.tsx; */}
         <ClientSideSuspense fallback={fallback}>
           {() => children}
         </ClientSideSuspense>
