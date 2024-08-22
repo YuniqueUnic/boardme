@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Menu } from "lucide-react";
 import { Poppins } from "next/font/google";
 
 import { Id } from "@/convex/_generated/dataModel";
@@ -11,6 +12,7 @@ import { useQuery } from "convex/react";
 import { cn } from "@/lib/utils";
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
+import { Actions } from "@/components/actions";
 import { useRenameModal } from "@/store/use-rename-modal";
 
 interface InfoProps {
@@ -24,7 +26,9 @@ const font = Poppins({
 
 export const TabSeparator = () => {
   return (
-    <div className="text-neutral-300 px-1.5"></div>
+    <div className="text-neutral-300 px-1.5">
+      |
+    </div>
   );
 };
 
@@ -60,12 +64,25 @@ export const Info = ({ boardId }: InfoProps) => {
         </Button>
       </Hint>
       <TabSeparator />
-      <Button
-        onClick={() => { onOpen(data._id, data.title); }}
-        variant={"board"}
-        className="text-base font-normal px-2">
-        {data.title}
-      </Button>
+      <Hint label={"Edit title"} side="bottom" sideOffset={10}>
+        <Button
+          onClick={() => { onOpen(data._id, data.title); }}
+          variant={"board"}
+          className="text-base font-normal px-2">
+          {data.title}
+        </Button>
+      </Hint>
+      <TabSeparator />
+      <Actions
+        id={data._id} title={data.title}      >
+        <div>
+          <Hint label={"Main menu"} side="bottom" sideOffset={10} >
+            <Button asChild variant={"board"} className="px-2">
+              <Menu />
+            </Button>
+          </Hint>
+        </div>
+      </Actions>
     </div >
   );
 };
