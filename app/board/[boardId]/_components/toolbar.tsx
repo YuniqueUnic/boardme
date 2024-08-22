@@ -10,7 +10,7 @@ import {
   Redo2
 } from "lucide-react";
 
-import { CanvasMode, CanvasState } from "@/types/canvas";
+import { CanvasMode, CanvasState, LayerType } from "@/types/canvas";
 
 import { ToolButton } from "./tool-button";
 
@@ -27,6 +27,8 @@ interface Tool {
   label: string;
   icon: LucideIcon;
   canvasMode: CanvasMode;
+  onClick: () => void;
+  isActive: boolean;
 }
 
 export const Toolbar = ({
@@ -43,32 +45,80 @@ export const Toolbar = ({
     {
       label: "Select",
       icon: MousePointer2,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.None,
+      onClick: () => {
+        setCanvasState({
+          mode: CanvasMode.None,
+        });
+      },
+      isActive: canvasState.mode === CanvasMode.None ||
+        canvasState.mode === CanvasMode.Translating ||
+        canvasState.mode === CanvasMode.SelectionNet ||
+        canvasState.mode === CanvasMode.Pressing ||
+        canvasState.mode === CanvasMode.Resizing
     },
     {
       label: "Text",
       icon: Type,
-      canvasMode: CanvasMode.Inserting
+      canvasMode: CanvasMode.Inserting,
+      onClick: () => {
+        setCanvasState({
+          mode: CanvasMode.Inserting,
+          layerType: LayerType.Text
+        });
+      },
+      isActive: canvasState.mode === CanvasMode.Inserting
+        && canvasState.layerType === LayerType.Text
     },
     {
       label: "Sticky Note",
       icon: StickyNote,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.Inserting,
+      onClick: () => {
+        setCanvasState({
+          mode: CanvasMode.Inserting,
+          layerType: LayerType.Note
+        });
+      },
+      isActive: canvasState.mode === CanvasMode.Inserting
+        && canvasState.layerType === LayerType.Note
     },
     {
       label: "Rectangle",
       icon: Square,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.Inserting,
+      onClick: () => {
+        setCanvasState({
+          mode: CanvasMode.Inserting,
+          layerType: LayerType.Rectangle
+        });
+      },
+      isActive: canvasState.mode === CanvasMode.Inserting
+        && canvasState.layerType === LayerType.Rectangle
     },
     {
       label: "Ellipse",
       icon: Circle,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.Inserting,
+      onClick: () => {
+        setCanvasState({
+          mode: CanvasMode.Inserting,
+          layerType: LayerType.Ellipse
+        });
+      },
+      isActive: canvasState.mode === CanvasMode.Inserting
+        && canvasState.layerType === LayerType.Ellipse
     },
     {
       label: "Pen",
       icon: Pencil,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.Pencil,
+      onClick: () => {
+        setCanvasState({
+          mode: CanvasMode.Pencil,
+        });
+      },
+      isActive: canvasState.mode === CanvasMode.Pencil
     }
   ];
 
@@ -76,12 +126,16 @@ export const Toolbar = ({
     {
       label: "Undo",
       icon: Undo2,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.None,
+      onClick: () => { },
+      isActive: false
     },
     {
       label: "Redo",
       icon: Redo2,
-      canvasMode: CanvasMode.None
+      canvasMode: CanvasMode.None,
+      onClick: () => { },
+      isActive: false
     }
   ];
 
@@ -93,26 +147,20 @@ export const Toolbar = ({
       {/* Tools: Pencil, Circle, Ellipsis, etc... */}
       <div
         className="bg-white rounded-md p-1.5 gap-y-1 shadow-md justify-center items-center">
-        {tools.map(({ label, icon, canvasMode }, i) => {
+        {tools.map(({ label, icon, canvasMode, onClick, isActive }, i) => {
           return <ToolButton
             key={i}
             lable={label}
             icon={icon}
-            onClick={() => {
-              setCanvasState({
-                mode: canvasMode
-              });
-            }}
-            isActive={
-              canvasState.mode === canvasMode
-            } />;
+            onClick={onClick}
+            isActive={isActive} />;
         })}
       </div>
       {/* actions: Undo,Redo */}
       <div
         className="bg-white rounded-md p-1.5 flex 
                         flex-col items-center shadow-md">
-        {actions.map(({ label, icon, canvasMode }, i) => {
+        {actions.map(({ label, icon }, i) => {
           return <ToolButton
             key={i}
             lable={label}
