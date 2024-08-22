@@ -26,9 +26,9 @@ interface ToolbarProps {
 interface Tool {
   label: string;
   icon: LucideIcon;
-  canvasMode: CanvasMode;
-  onClick: () => void;
-  isActive: boolean;
+  canvasMode?: CanvasMode;
+  onClick?: () => void;
+  isActive?: boolean;
 }
 
 export const Toolbar = ({
@@ -126,16 +126,10 @@ export const Toolbar = ({
     {
       label: "Undo",
       icon: Undo2,
-      canvasMode: CanvasMode.None,
-      onClick: () => { },
-      isActive: false
     },
     {
       label: "Redo",
       icon: Redo2,
-      canvasMode: CanvasMode.None,
-      onClick: () => { },
-      isActive: false
     }
   ];
 
@@ -152,7 +146,7 @@ export const Toolbar = ({
             key={i}
             lable={label}
             icon={icon}
-            onClick={onClick}
+            onClick={onClick!}
             isActive={isActive} />;
         })}
       </div>
@@ -165,8 +159,8 @@ export const Toolbar = ({
             key={i}
             lable={label}
             icon={icon}
-            onClick={label === 'Undo' ? undo : redo}
-            isDisabled={label === 'Undo' ? !canUndo : !canRedo}
+            onClick={label === "Undo" ? undo : redo}
+            isDisabled={label === "Undo" ? !canUndo : !canRedo}
           />;
         })}
       </div>
