@@ -4,7 +4,7 @@ import { memo } from "react";
 
 import { Cursor } from "./cursor";
 
-import { useOthersConnectionIds } from "@liveblocks/react/suspense";
+import { useOthersConnectionIds } from "@liveblocks/react";
 
 const Cursors = () => {
     const ids = useOthersConnectionIds();
@@ -12,7 +12,7 @@ const Cursors = () => {
     return (
         <>
             {ids.map((connectionId) => {
-                <Cursor
+                return <Cursor
                     key={connectionId}
                     connectionId={connectionId} />;
             })}

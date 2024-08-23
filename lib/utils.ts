@@ -28,6 +28,6 @@ export function pointerEventToCanvasEvent(
 ) {
   return {
     x: Math.round(e.clientX - camera.x),
-    y: Math.round(e.clientX - camera.y),
+    y: Math.round(e.clientY - camera.y),
   };
 }
