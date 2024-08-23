@@ -32,22 +32,54 @@ export type RectangleLayer = {
 // 需要注意的是，type 属性在 EllipseLayer 中被重新定义为 LayerType.Ellipse，
 // 这会覆盖 RectangleLayer 中的 type 属性。如果你希望 EllipseLayer 保留 RectangleLayer 的 type 属性，
 // 可以省略 type 属性的重新定义。
-export type EllipseLayer = RectangleLayer & {
+// 用 & 的方式会导致 TS/JS 类型判断错误. 从而导致编译提示错误
+/**
+ *  export type EllipseLayer = RectangleLayer & {
     type: LayerType.Ellipse;
+    };
+ * 
+ */
+
+export type EllipseLayer = {
+    type: LayerType.Ellipse;
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    fill: Color,
+    value?: string;
 };
 
 // add one more points property to PathLayer to store the points of the path.
-export type PathLayer = RectangleLayer & {
+export type PathLayer = {
     type: LayerType.Path;
     points: number[][];
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    fill: Color,
+    value?: string;
 };
 
-export type TextLayer = RectangleLayer & {
+export type TextLayer = {
     type: LayerType.Text;
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    fill: Color,
+    value?: string;
 };
 
-export type NoteLayer = RectangleLayer & {
+export type NoteLayer = {
     type: LayerType.Note;
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    fill: Color,
+    value?: string;
 };
 
 export type Point = {
@@ -78,10 +110,10 @@ export type CanvasState = | {
     current: Point;
 } | {
     mode: CanvasMode.Inserting,
-    layerType: LayerType.Ellipse
-    | LayerType.Rectangle
+    layerType: LayerType.Rectangle
+    | LayerType.Ellipse
     | LayerType.Text
-    | LayerType.Path
+    // | LayerType.Path
     | LayerType.Note;
 } | {
     mode: CanvasMode.Pencil,
@@ -105,3 +137,11 @@ export enum CanvasMode {
     Resizing,
     Pencil
 }
+
+
+export type Layer = RectangleLayer |
+    EllipseLayer |
+    PathLayer |
+    TextLayer |
+    NoteLayer;
+

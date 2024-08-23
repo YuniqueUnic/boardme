@@ -1,12 +1,20 @@
 "use client";
 
 import { ReactNode } from "react";
+
+import { Layer } from "@/types/canvas";
+
 import {
   LiveblocksProvider,
   RoomProvider,
   ClientSideSuspense,
 } from "@liveblocks/react/suspense";
 import { liveblocksPBKey } from "@/liveblocks.config";
+import {
+  LiveList,
+  LiveMap,
+  LiveObject
+} from "@liveblocks/client";
 
 interface RoomProps {
   children: ReactNode;
@@ -20,9 +28,16 @@ export const Room = ({ children, roomId, fallback }: RoomProps) => {
     // publicApiKey={apiKey}  publicApiKey and authEndpoint can only one works
     <LiveblocksProvider authEndpoint={"/api/liveblocks-auth"} throttle={16}>
 
-      <RoomProvider id={roomId} initialPresence={{
-        cursor: null,
-      }}>
+      <RoomProvider
+        id={roomId}
+        initialPresence={{
+          cursor: null,
+          selection: []
+        }}
+        initialStorage={{
+          layers: new LiveMap<string, LiveObject<Layer>>(),
+          layerIds: new LiveList([])
+        }}>
         {/* // there are some problem that the board should not be access by a non-privledged user
       // the ui canvas should in the loading status when such users trying to join a board room which not belong to them */}
         {/* // Fixed: Keep the loading status when the user is not authorized to access the board */}
