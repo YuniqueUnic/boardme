@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 
 import { nanoid } from "nanoid";
 
@@ -10,7 +10,8 @@ import {
   useCanUndo,
   useCanRedo,
   useMutation,
-  useStorage
+  useStorage,
+  useOthersMapped
 } from "@liveblocks/react";
 import { LiveObject } from "@liveblocks/client";
 
@@ -27,8 +28,12 @@ import { Info } from "./info";
 import { Toolbar } from "./toolbar";
 import { Participants } from "./participants";
 import { LayerPreview } from "./layer-preview";
+import { SelectionBox } from "./selection-box";
 import { CursorsPresence } from "./cursors-presence";
-import { pointerEventToCanvasEvent } from "@/lib/utils";
+
+
+import { connectionIdToColor, pointerEventToCanvasEvent } from "@/lib/utils";
+
 
 // import { useQuery } from "convex/react";
 // import { api } from "@/convex/_generated/api";
@@ -95,6 +100,13 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
 
   const onWheel = useCallback((e: React.WheelEvent) => {
+
+    console.log({
+      x: camera.x - e.deltaX,
+      y: camera.y - e.deltaY,
+    }, "onWheel Scrolling");
+
+
     setCamera((camera) => ({
       x: camera.x - e.deltaX,
       y: camera.y - e.deltaY,
@@ -129,11 +141,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
     const point = pointerEventToCanvasEvent(e, camera);
 
-    console.log({
-      point,
-      mode: canvasState.mode
-    });
-
     if (canvasState.mode === CanvasMode.Inserting) {
       insertLayer(canvasState.layerType, point);
     } else {
@@ -150,6 +157,55 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     insertLayer
   ]);
 
+
+  const selections = useOthersMapped((other) => {
+    return other.presence.selection;
+  });
+
+  const onLayerPointerDown = useMutation(({
+    self, setMyPresence
+  },
+    e: React.PointerEvent,
+    layerId: string
+  ) => {
+    if (canvasState.mode === CanvasMode.Pencil ||
+      canvasState.mode === CanvasMode.Inserting
+    ) {
+      return;
+    }
+
+    history.pause();
+    e.stopPropagation();
+
+    const point = pointerEventToCanvasEvent(e, camera);
+
+    if (!self.presence.selection.includes(layerId)) {
+      setMyPresence({ selection: [layerId] }, { addToHistory: true });
+    }
+
+    setCanvasState({ mode: CanvasMode.Translating, current: point });
+
+  }, [
+    setCanvasState,
+    camera,
+    history,
+    canvasState.mode,
+  ]);
+
+  const layerIdToColorSelection = useMemo(() => {
+    const layerIdsToColorSelection: Record<string, string> = {};
+
+    for (const user of selections) {
+      const [connectionId, selection] = user;
+
+      for (const layerId of selection) {
+        layerIdsToColorSelection[layerId] = connectionIdToColor(connectionId);
+      }
+
+    }
+
+    return layerIdsToColorSelection;
+  }, [selections]);
 
 
   return (
@@ -171,15 +227,16 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         onPointerUp={onPointerUp}
       >
         <g style={{
-          transform: `tanslate(${camera.x}px, ${camera.y}px)`
+          transform: `translate(${camera.x}px, ${camera.y}px)`
         }}>
           {layerIds?.map((layerId) => {
             return <LayerPreview
               key={layerId}
               id={layerId}
-              onLayerPointerDown={() => { }}
-              selectionColor={"#000"} />;
+              onLayerPointerDown={(e) => { return onLayerPointerDown(e, layerId); }}
+              selectionColor={layerIdToColorSelection[layerId]} />;
           })}
+          <SelectionBox onResizeHandlePointerDown={() => { }} />
           <CursorsPresence />
         </g>
       </svg>

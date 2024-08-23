@@ -89,7 +89,7 @@ export type Point = {
 
 export type XYWH = Point & {
     width: number,
-    heigth: number;
+    height: number;
 };
 
 export enum Side {
