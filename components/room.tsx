@@ -36,7 +36,7 @@ export const Room = ({ children, roomId, fallback }: RoomProps) => {
         }}
         initialStorage={{
           layers: new LiveMap<string, LiveObject<Layer>>(),
-          layerIds: new LiveList([])
+          layerIds: new LiveList<string[]>([])
         }}>
         {/* // there are some problem that the board should not be access by a non-privledged user
       // the ui canvas should in the loading status when such users trying to join a board room which not belong to them */}

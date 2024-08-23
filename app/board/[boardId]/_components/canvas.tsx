@@ -26,6 +26,7 @@ import {
 import { Info } from "./info";
 import { Toolbar } from "./toolbar";
 import { Participants } from "./participants";
+import { LayerPreview } from "./layer-preview";
 import { CursorsPresence } from "./cursors-presence";
 import { pointerEventToCanvasEvent } from "@/lib/utils";
 
@@ -40,7 +41,7 @@ interface CanvasProps {
   boardId: string;
 }
 export const Canvas = ({ boardId }: CanvasProps) => {
-  const layerIds = useStorage((root) => root.layers);
+  const layerIds = useStorage((root) => root.layerIds);
 
 
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
@@ -172,6 +173,13 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         <g style={{
           transform: `tanslate(${camera.x}px, ${camera.y}px)`
         }}>
+          {layerIds?.map((layerId) => {
+            return <LayerPreview
+              key={layerId}
+              id={layerId}
+              onLayerPointerDown={() => { }}
+              selectionColor={"#000"} />;
+          })}
           <CursorsPresence />
         </g>
       </svg>
