@@ -14,7 +14,7 @@ import { Camera, CanvasMode, CanvasState } from "@/types/canvas";
 import { Info } from "./info";
 import { Toolbar } from "./toolbar";
 import { Participants } from "./participants";
-import { CursorsPresence } from "./cursors-resence";
+import { CursorsPresence } from "./cursors-presence";
 import { pointerEventToCanvasEvent } from "@/lib/utils";
 
 // import { useQuery } from "convex/react";
