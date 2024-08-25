@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Star } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 import { api } from "@/convex/_generated/api";
@@ -54,9 +54,21 @@ export const BoardCard = ({
 
   const toggleFavorite = () => {
     if (isFavorite) {
-      onUnfavorite({ id }).catch(() => toast.error("Failed to unfavorite"));
+      onUnfavorite({ id })
+        .then(() => toast.warning("Unfavorited", {
+          duration: 1000,
+          icon: <Star className="pr-2" />,
+          richColors: true
+        }))
+        .catch(() => toast.error("Failed to unfavorite"));
     } else {
-      onFavorite({ id, orgId }).catch(() => toast.error("Failed to favorite"));
+      onFavorite({ id, orgId })
+        .then(() => toast.success("Favorited", {
+          duration: 1000,
+          icon: <Star className="fill-green-300 pr-2" />,
+          richColors: true
+        }))
+        .catch(() => toast.error("Failed to favorite"));
     }
   };
 
