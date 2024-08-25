@@ -78,7 +78,7 @@ export const Info = ({ boardId }: InfoProps) => {
         <div>
           <Hint label={"Main menu"} side="bottom" sideOffset={10} >
             <Button asChild variant={"board"} className="px-2">
-              <Menu />
+              <Menu className="h-8 w-8" />
             </Button>
           </Hint>
         </div>

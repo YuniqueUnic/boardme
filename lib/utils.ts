@@ -1,9 +1,17 @@
 import React from "react";
 
-import { Camera, Color, Point, Side, XYWH } from "@/types/canvas";
+import {
+  Side,
+  XYWH,
+  Color,
+  Layer,
+  Point,
+  Camera,
+} from "@/types/canvas";
 
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
+import { Layout } from "lucide-react";
 
 // generate some colors by #.... format
 const COLORS = [
@@ -69,4 +77,44 @@ export function resizeBounds(bounds: XYWH, corner: Side, point: Point) {
 
   return result;
 
+}
+
+export function findIntersectingLayersWithRectangle(
+  layerIds: readonly string[],
+  layers: ReadonlyMap<string, Layer>,
+  a: Point,
+  b: Point
+) {
+  const rect = {
+    x: Math.min(a.x, b.x),
+    y: Math.min(a.y, b.y),
+    width: Math.abs(a.x - b.x),
+    height: Math.abs(a.y - b.y)
+  };
+
+  const ids = [];
+
+  for (const layerId of layerIds) {
+    const layer = layers.get(layerId);
+
+
+    if (layer == null) {
+      // 这里的 layer 可以是 null 或 undefined
+      // layer === null 只会检查 layer 是否为 null，而不会检查是否为 undefined。;
+      continue;
+    }
+
+    const { x, y, height, width } = layer;
+
+    if (
+      rect.x + rect.width > x &&
+      rect.x < x + width &&
+      rect.y + rect.height > y &&
+      rect.y < y + height
+    ) {
+      ids.push(layerId);
+    }
+  }
+
+  return ids;
 }
