@@ -22,7 +22,7 @@ export const ColorPicker = ({
     onChange
 }: ColorPickerProps) => {
     return <div className="flex flex-wrap gap-2 items-center max-w-[164px] 
-                            p-2 mr-2 border-r border-neutral-200">
+                            mr-2 border-r border-neutral-200">
         {Colors.map((color, index) => {
             return (
                 <ColorButton
