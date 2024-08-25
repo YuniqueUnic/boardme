@@ -31,6 +31,7 @@ import { Toolbar } from "./toolbar";
 import { Participants } from "./participants";
 import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
+import { SelectionTools } from "./selection-tools";
 import { CursorsPresence } from "./cursors-presence";
 
 
@@ -102,6 +103,14 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     setCanvasState({ mode: CanvasMode.None });
   }, [lastUsedColor]);
 
+  const unselectLayer = useMutation((
+    { self, setMyPresence },
+  ) => {
+    if (self.presence.selection.length > 0) {
+      setMyPresence({ selection: [] }, { addToHistory: true });
+    }
+  }, []);
+
   const resizeSelectedLayer = useMutation((
     { storage, self },
     point: Point
@@ -120,6 +129,42 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     }
 
   }, [canvasState]);
+
+
+  const translateSelectedLayer = useMutation((
+    { storage, self },
+    point: Point
+  ) => {
+
+    if (canvasState.mode !== CanvasMode.Translating) {
+      return;
+    }
+
+    const offset = {
+      x: point.x - canvasState.current.x,
+      y: point.y - canvasState.current.y
+    };
+
+    const liveLayers = storage.get("layers");
+
+    for (const id of self.presence.selection) {
+      const layer = liveLayers.get(id);
+
+      if (layer) {
+        layer.update({
+          x: layer.get("x") + offset.x,
+          y: layer.get("y") + offset.y
+        });
+      }
+
+    }
+
+    setCanvasState({ mode: CanvasMode.Translating, current: point });
+  }, [
+    canvasState,
+  ]);
+
+
 
   const onResizeHandlePointerDown = useCallback((
     corner: Side,
@@ -142,12 +187,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
   const onWheel = useCallback((e: React.WheelEvent) => {
 
-    console.log({
-      x: camera.x - e.deltaX,
-      y: camera.y - e.deltaY,
-    }, "onWheel Scrolling");
-
-
     setCamera((camera) => ({
       x: camera.x - e.deltaX,
       y: camera.y - e.deltaY,
@@ -162,7 +201,9 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
     const current = pointerEventToCanvasEvent(e, camera);
 
-    if (canvasState.mode === CanvasMode.Resizing) {
+    if (canvasState.mode === CanvasMode.Translating) {
+      translateSelectedLayer(current);
+    } else if (canvasState.mode === CanvasMode.Resizing) {
       resizeSelectedLayer(current);
     }
 
@@ -180,13 +221,41 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
   }, []);
 
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const point = pointerEventToCanvasEvent(e, camera);
+
+    if (canvasState.mode === CanvasMode.Inserting) {
+      return;
+    }
+
+    // TODO: Add case for drawing
+
+    setCanvasState({ mode: CanvasMode.Pressing, origin: point });
+  }, [
+    camera,
+    canvasState.mode,
+    setCanvasState,
+    // setCanvasState
+  ]);
+
   const onPointerUp = useMutation((
     { },
     e) => {
 
     const point = pointerEventToCanvasEvent(e, camera);
 
-    if (canvasState.mode === CanvasMode.Inserting) {
+    if (
+      canvasState.mode === CanvasMode.None ||
+      canvasState.mode === CanvasMode.Pressing
+    ) {
+
+      unselectLayer();
+
+      setCanvasState({
+        mode: CanvasMode.None
+      });
+    } else if (canvasState.mode === CanvasMode.Inserting) {
       insertLayer(canvasState.layerType, point);
     } else {
       setCanvasState({
@@ -199,7 +268,8 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     camera,
     canvasState,
     history,
-    insertLayer
+    insertLayer,
+    unselectLayer
   ]);
 
 
@@ -265,11 +335,17 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         undo={history.undo}
         redo={history.redo}
       />
+      <SelectionTools
+        camera={camera}
+        setLastUsedColor={setLastUserColor}
+      />
+
       <svg className="h-[100vh] w-[100vw]"
         onWheel={onWheel}
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
         onPointerUp={onPointerUp}
+        onPointerDown={onPointerDown}
       >
         <g style={{
           transform: `translate(${camera.x}px, ${camera.y}px)`
