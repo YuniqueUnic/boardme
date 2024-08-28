@@ -124,11 +124,11 @@ export const Toolbar = ({
 
   const actions: Tool[] = [
     {
-      label: "Undo",
+      label: "Undo (Ctrl + z)",
       icon: Undo2,
     },
     {
-      label: "Redo",
+      label: "Redo (Ctr + Shift + z)",
       icon: Redo2,
     }
   ];

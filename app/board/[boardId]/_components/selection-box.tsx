@@ -196,7 +196,6 @@ export const SelectionBox = memo(({
                     onPointerDown={(e) => {
                         e.stopPropagation();
                         onResizeHandlePointerDown(Side.Left, bounds);
-                        // TODO:Add Resize handler
                     }}
                 />
             </>

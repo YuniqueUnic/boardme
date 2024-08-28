@@ -43,7 +43,7 @@ export const SelectionTools = memo((
 
         const indices: number[] = [];  // the indices of selection layer ids in the liveLayerIds array
 
-        const arr = liveLayerIds.toArray();
+        const arr = liveLayerIds.toImmutable();
 
         for (let i = 0; i < arr.length; i++) {
             if (selection?.includes(arr[i])) {
@@ -66,7 +66,7 @@ export const SelectionTools = memo((
         index: number
     ) => {
         const liveLayerIds = storage.get("layerIds");
-        const arr = liveLayerIds.toArray();
+        const arr = liveLayerIds.toImmutable();
         const indices: number[] = arr
             .map((layerId, idx) => selection?.includes(layerId) ? idx : -1)
             .filter(idx => idx !== -1);
@@ -107,7 +107,7 @@ export const SelectionTools = memo((
 
         const indices: number[] = [];  // the indices of selection layer ids in the liveLayerIds array
 
-        const arr = liveLayerIds.toArray();
+        const arr = liveLayerIds.toImmutable();
 
         for (let i = 0; i < arr.length; i++) {
             if (selection?.includes(arr[i])) {
