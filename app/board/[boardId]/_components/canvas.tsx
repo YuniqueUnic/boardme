@@ -35,7 +35,7 @@ import { SelectionTools } from "./selection-tools";
 import { CursorsPresence } from "./cursors-presence";
 
 
-import { connectionIdToColor, findIntersectingLayersWithRectangle, pointerEventToCanvasEvent, resizeBounds } from "@/lib/utils";
+import { connectionIdToColor, findIntersectingLayersWithRectangle, penPointToPathLayer, pointerEventToCanvasEvent, resizeBounds } from "@/lib/utils";
 import { SelectionFontTools } from "./selection-font-tools";
 
 
@@ -169,6 +169,82 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
   }, [canvasState]);
 
+  const insertPath = useMutation((
+    { storage, self, setMyPresence }
+  ) => {
+
+    const liveLayers = storage.get("layers");
+    const { pencilDraft } = self.presence;
+
+    if (
+      pencilDraft == null ||
+      pencilDraft.length < 2 ||
+      liveLayers.size >= MAX_LAYERS
+    ) {
+      setMyPresence({ pencilDraft: null });
+      return;
+    }
+
+    const id = nanoid();
+    liveLayers.set(id,
+      new LiveObject(penPointToPathLayer(
+        pencilDraft,
+        lastUsedColor
+      )),
+    );
+
+    const liveLayerIds = storage.get("layerIds");
+    liveLayerIds.push(id);
+
+    setMyPresence({
+      pencilDraft: null
+    });
+
+    setCanvasState({ mode: CanvasMode.Pencil });
+
+  }, [lastUsedColor]);
+
+  const startDrawing = useMutation((
+    { setMyPresence },
+    point: Point,
+    pressure: number
+  ) => {
+    setMyPresence({
+      pencilDraft: [[point.x, point.y, pressure]],
+      penColor: lastUsedColor
+    });
+  }, [lastUsedColor]);
+
+  const continueDrawing = useMutation((
+    { self, setMyPresence },
+    point: Point,
+    e: React.PointerEvent
+  ) => {
+
+    const { pencilDraft } = self.presence;
+
+    if (
+      canvasState.mode !== CanvasMode.Pencil ||
+      e.buttons !== 1 ||
+      pencilDraft === null
+    ) {
+      return;
+    }
+
+    setMyPresence({
+      cursor: point,
+      pencilDraft:
+        pencilDraft.length === 1 &&
+          pencilDraft[0][0] === point.x &&
+          pencilDraft[0][1] === point.y
+          ? pencilDraft
+          : [...pencilDraft, [point.x, point.y, e.pressure]]
+    });
+
+  }, [canvasState.mode]);
+
+
+
 
   const translateSelectedLayer = useMutation((
     { storage, self },
@@ -248,11 +324,20 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       translateSelectedLayer(current);
     } else if (canvasState.mode === CanvasMode.Resizing) {
       resizeSelectedLayer(current);
+    } else if (canvasState.mode === CanvasMode.Pencil) {
+      continueDrawing(current, e);
     }
 
     setMyPresence({ cursor: current });
 
-  }, [camera, canvasState, resizeSelectedLayer]);
+  }, [
+    camera,
+    canvasState,
+    updateSelecionNet,
+    resizeSelectedLayer,
+    startMultiSelection,
+    continueDrawing,
+  ]);
 
   const onPointerLeave = useMutation((
     { setMyPresence },
@@ -264,7 +349,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
   }, []);
 
-
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     const point = pointerEventToCanvasEvent(e, camera);
 
@@ -272,13 +356,17 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       return;
     }
 
-    // TODO: Add case for drawing
+    if (canvasState.mode === CanvasMode.Pencil) {
+      startDrawing(point, e.pressure);
+      return;
+    }
 
     setCanvasState({ mode: CanvasMode.Pressing, origin: point });
   }, [
     camera,
     canvasState.mode,
     setCanvasState,
+    startDrawing
     // setCanvasState
   ]);
 
@@ -298,13 +386,17 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       setCanvasState({
         mode: CanvasMode.None
       });
-    } else if (canvasState.mode === CanvasMode.Inserting) {
-      insertLayer(canvasState.layerType, point);
-    } else {
-      setCanvasState({
-        mode: CanvasMode.None
-      });
-    }
+    } else
+      if (canvasState.mode === CanvasMode.Pencil) {
+        insertPath();
+      }
+      else if (canvasState.mode === CanvasMode.Inserting) {
+        insertLayer(canvasState.layerType, point);
+      } else {
+        setCanvasState({
+          mode: CanvasMode.None
+        });
+      }
 
     history.resume();
   }, [
@@ -312,7 +404,9 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     canvasState,
     history,
     insertLayer,
-    unselectLayer
+    unselectLayer,
+    setCanvasState,
+    insertPath
   ]);
 
 
