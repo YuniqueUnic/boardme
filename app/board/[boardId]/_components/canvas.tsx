@@ -74,11 +74,10 @@ export const Canvas = ({ boardId }: CanvasProps) => {
   });
 
 
-
   useDisableScrollBounce();
   const history = useHistory();
-  // const undo = useUndo();
-  // const redo = useRedo();
+  const undo = useUndo();
+  const redo = useRedo();
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
 
@@ -253,9 +252,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
   }, [canvasState.mode]);
 
-
-
-
   const translateSelectedLayer = useMutation((
     { storage, self },
     point: Point
@@ -289,8 +285,6 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     canvasState,
   ]);
 
-
-
   const onResizeHandlePointerDown = useCallback((
     corner: Side,
     initialBounds: XYWH,) => {
@@ -309,6 +303,8 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       initialBounds,
       corner
     });
+
+    history.resume();
 
   }, [history]);
 
@@ -449,6 +445,8 @@ export const Canvas = ({ boardId }: CanvasProps) => {
 
     setCanvasState({ mode: CanvasMode.Translating, current: point });
 
+    history.resume();
+
   }, [
     setCanvasState,
     camera,
@@ -480,9 +478,14 @@ export const Canvas = ({ boardId }: CanvasProps) => {
           {
             if (e.ctrlKey || e.metaKey) {
               if (e.shiftKey) {
-                history.redo();
+                if (canRedo) {
+                  // TODO: Fix bug for the failure of redoing 
+                  redo();
+                }
               } else {
-                history.undo();
+                if (canUndo) {
+                  undo();
+                }
               }
             }
             break;
@@ -492,15 +495,12 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       }
     }
 
-
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  },
-    [deleteLayers, history]);
-
+  }, [deleteLayers, history]);
 
   return (
     <main className="w-full h-full relative bg-neutral-100 touch-none">
@@ -511,8 +511,10 @@ export const Canvas = ({ boardId }: CanvasProps) => {
         setCanvasState={setCanvasState}
         canUndo={canUndo}
         canRedo={canRedo}
-        undo={history.undo}
-        redo={history.redo}
+        undo={undo}
+        redo={redo}
+      // undo={history.undo}
+      // redo={history.redo}
       />
       <SelectionTools
         camera={camera}
