@@ -1,6 +1,6 @@
 import { shallow } from "@liveblocks/react";
 
-import { Layer } from "@/types/canvas";
+import { Layer, LayerType } from "@/types/canvas";
 
 import { useStorage, useSelf } from "@liveblocks/react";
 

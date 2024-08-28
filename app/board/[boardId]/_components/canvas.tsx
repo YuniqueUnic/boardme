@@ -55,7 +55,6 @@ interface CanvasProps {
 export const Canvas = ({ boardId }: CanvasProps) => {
   const layerIds = useStorage((root) => root.layerIds);
 
-
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
   const [lastUsedColor, setLastUserColor] = useState<Color>({
     r: 0,
