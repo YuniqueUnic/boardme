@@ -283,6 +283,10 @@ export const Canvas = ({ boardId }: CanvasProps) => {
     setCanvasState({ mode: CanvasMode.Translating, current: point });
   }, [
     canvasState,
+    canRedo,
+    canUndo,
+    redo,
+    undo
   ]);
 
   const onResizeHandlePointerDown = useCallback((

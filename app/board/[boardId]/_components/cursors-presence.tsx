@@ -38,6 +38,7 @@ const Drafts = () => {
                 others.map(([key, other]) => {
                     if (other.pencilDraft) {
                         return <Path
+                            key={key}
                             x={0}
                             y={0}
                             points={other.pencilDraft}

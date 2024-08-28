@@ -71,7 +71,7 @@ export const SelectionFontTools = memo(({ camera }: SelectionFontToolsProps) => 
                 }
             }
         }
-    }, [selection, liveLayers]);
+    }, [fontTextSize, selection, liveLayers]);
 
     const setFontSize = useMutation((
         { storage },
@@ -263,7 +263,7 @@ export const SelectionFontTools = memo(({ camera }: SelectionFontToolsProps) => 
                     </text>
                 </div>
                 {FontTools.map(({ hint, icon, onClick, onMouseDown, onMouseUp }, index) => (
-                    <Hint label={hint}>
+                    <Hint key={index} label={hint}>
                         <Button
                             asChild
                             className="w-8 h-8"
