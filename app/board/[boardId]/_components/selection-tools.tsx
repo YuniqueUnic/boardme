@@ -22,6 +22,7 @@ import { useSelectionBounds } from "@/hooks/use-selection-bounds";
 
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
+import { useSelectionLayerWithText } from "@/hooks/use-selection-layer-with-text";
 
 
 
@@ -139,6 +140,8 @@ export const SelectionTools = memo((
 
     const selectionBounds = useSelectionBounds();
 
+    const isSelectedLayerWithText = useSelectionLayerWithText();
+
     if (!selectionBounds) {
         return null;
     }
@@ -146,12 +149,13 @@ export const SelectionTools = memo((
     const x = selectionBounds.width / 2 + selectionBounds.x + camera.x;
     const y = selectionBounds.y + camera.y;
 
+    const toolsOffset = isSelectedLayerWithText ? 66 : 16;
 
     return <div className="absolute z-50 p-3 rounded-xl bg-white shadow-sm border flex select-none"
         style={{
             transform: `translate(
             calc(${x}px - 50%),
-            calc(${y - 16}px - 100%)
+            calc(${y - toolsOffset}px - 100%)
             )`
         }}
     >

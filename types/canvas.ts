@@ -1,3 +1,5 @@
+import { FontSize, FontWeight, TextAlign } from "./font-settings";
+
 export type Color = {
     r: number,
     g: number,
@@ -25,6 +27,9 @@ export type RectangleLayer = {
     width: number,
     fill: Color,
     value?: string;
+    fontSize?: number;
+    textAlign?: TextAlign;
+    fontWeight?: FontWeight;
 };
 
 // EllipseLayer类型通过交叉类型 & 继承了 RectangleLayer 类型的所有属性，
@@ -48,6 +53,9 @@ export type EllipseLayer = {
     width: number,
     fill: Color,
     value?: string;
+    fontSize?: number;
+    textAlign?: TextAlign;
+    fontWeight?: FontWeight;
 };
 
 // add one more points property to PathLayer to store the points of the path.
@@ -60,6 +68,9 @@ export type PathLayer = {
     width: number,
     fill: Color,
     value?: string;
+    fontSize?: number;
+    textAlign?: TextAlign;
+    fontWeight?: FontWeight;
 };
 
 export type TextLayer = {
@@ -70,6 +81,9 @@ export type TextLayer = {
     width: number,
     fill: Color,
     value?: string;
+    fontSize?: number;
+    textAlign?: TextAlign;
+    fontWeight?: FontWeight;
 };
 
 export type NoteLayer = {
@@ -80,6 +94,9 @@ export type NoteLayer = {
     width: number,
     fill: Color,
     value?: string;
+    fontSize?: number;
+    textAlign?: TextAlign;
+    fontWeight?: FontWeight;
 };
 
 export type Point = {

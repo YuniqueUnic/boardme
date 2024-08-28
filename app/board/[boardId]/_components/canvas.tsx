@@ -36,6 +36,7 @@ import { CursorsPresence } from "./cursors-presence";
 
 
 import { connectionIdToColor, findIntersectingLayersWithRectangle, pointerEventToCanvasEvent, resizeBounds } from "@/lib/utils";
+import { SelectionFontTools } from "./selection-font-tools";
 
 
 // import { useQuery } from "convex/react";
@@ -381,6 +382,9 @@ export const Canvas = ({ boardId }: CanvasProps) => {
       <SelectionTools
         camera={camera}
         setLastUsedColor={setLastUserColor}
+      />
+      <SelectionFontTools
+        camera={camera}
       />
 
       <svg className="h-[100vh] w-[100vw]"
