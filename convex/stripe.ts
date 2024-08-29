@@ -3,9 +3,7 @@
 import Stripe from "stripe";
 import { v } from "convex/values";
 
-import { action } from "./_generated/server";
-import { setEngine } from "crypto";
-
+import { action, internalAction } from "./_generated/server";
 
 const url = process.env.NEXT_PUBLIC_APP_URL!;
 const stripe = new Stripe(
@@ -61,3 +59,30 @@ export const pay = action({
         return session.url!;
     },
 });
+
+
+export const fulfill = internalAction({
+    args: { signature: v.string(), payload: v.string() },
+    handler: async (ctx, { signature, payload }) => {
+        const webhooklSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+        try {
+            const event = stripe.webhooks.constructEvent(
+                payload,
+                signature,
+                webhooklSecret
+            );
+
+            if (event.type === "checkout.session.completed") {
+                const session = event.data.object as Stripe.Checkout.Session;
+                console.log("CHCKOUT SESSION COMPLETED");
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error(error);
+            return { success: false, error };
+        }
+    }
+});
+
+
