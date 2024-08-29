@@ -27,10 +27,10 @@ export default defineSchema({
 
   orgSubscription: defineTable({
     orgId: v.string(),
-    stripeCustomerId: v.string(),
-    stripeSubscriptionId: v.string(),
     stripePlanId: v.string(),
     stripePriceId: v.string(),
+    stripeCustomerId: v.string(),
+    stripeSubscriptionId: v.string(),
     stripeCurrentPeriodEnd: v.number(),
   }).index("by_org", ["orgId"])
     .index("by_subscription", ["stripeSubscriptionId"])

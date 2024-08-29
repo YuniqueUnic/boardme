@@ -20,7 +20,7 @@ http.route({
                 status: 200
             });
         } else {
-            return new Response("Webhook error", {
+            return new Response("Webhook Error", {
                 status: 400
             });
         }
