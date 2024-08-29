@@ -65,7 +65,7 @@ export const OrgSidebar = () => {
             Board
           </span>
           {isSubscribed && (
-            <Badge variant={"secondary"}>
+            <Badge variant={"pro"}>
               Pro
             </Badge>
           )}
